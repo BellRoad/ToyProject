@@ -1,0 +1,5 @@
+pyinstaller
+
+-F, --onefile 1개 파일
+-w, --windowed, --noconsole 콘솔실행 안함
+--upx-dir c:\xxx\xxx
