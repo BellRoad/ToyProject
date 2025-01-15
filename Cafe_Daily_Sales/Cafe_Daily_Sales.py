@@ -240,27 +240,6 @@ ttk.Label(frame_products, text='품명', font=font).grid(row=0, column=0, padx=5
 ttk.Label(frame_products, text='수량', font=font).grid(row=0, column=1, padx=5)
 ttk.Label(frame_products, text='금액', font=font).grid(row=0, column=2, padx=5)
 
-# 자동합계 계산 코드 추가
-def calculate_total_amount():
-    total = 0
-    for _, _, entry_amount in entries:
-        try:
-            value = int(entry_amount.get())
-            total += value
-        except ValueError:
-            pass
-    return total
-
-def update_total_label():
-    total = calculate_total_amount() / 2
-    total_label.config(text=f"총 합계: {total:,}")
-
-def on_focus_out(event=None, entry_field=None):
-    value = entry_field.get()
-    entry_field.delete(0, tk.END)
-    entry_field.insert(0, str(evaluate_expression(value)))
-    update_total_label()  # 값이 변경될 때마다 합계 업데이트
-
 entries = []
 for i, product_name in enumerate(product_names, start=1):
     ttk.Label(frame_products, text=product_name, font=font).grid(row=i, column=0, padx=5)
@@ -270,13 +249,14 @@ for i, product_name in enumerate(product_names, start=1):
     
     entry_amount = ttk.Entry(frame_products, font=font, width=10, justify='right')
     entry_amount.grid(row=i, column=2, padx=5)
+
+    def on_focus_out(event=None, entry_field=None):
+        value = entry_field.get()
+        entry_field.delete(0, tk.END)
+        entry_field.insert(0, str(evaluate_expression(value)))
     
     entry_quantity.bind('<FocusOut>', lambda e, field=entry_quantity: on_focus_out(e, field))
     entry_amount.bind('<FocusOut>', lambda e, field=entry_amount: on_focus_out(e, field))
-    
-    # 키 입력 이벤트에 대한 바인딩 추가
-    entry_quantity.bind('<KeyRelease>', lambda e, field=entry_quantity: on_focus_out(None, field))
-    entry_amount.bind('<KeyRelease>', lambda e, field=entry_amount: on_focus_out(None, field))
     
     if product_name in disable_quantity_items:
         entry_quantity.config(state='disabled')
@@ -287,13 +267,6 @@ for i, product_name in enumerate(product_names, start=1):
         entry_amount.insert(0, '0')
 
     entries.append((product_name, entry_quantity, entry_amount))
-
-# 합계를 표시할 레이블 추가
-total_label = ttk.Label(root, text="매출: 0", font=font)
-total_label.pack(pady=10)
-
-# 초기 합계 표시
-update_total_label()
 
 # 입력 버튼
 btn_save = ttk.Button(root, text='입력', command=save_to_db)
