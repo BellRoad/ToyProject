@@ -1,48 +1,52 @@
+import tkinter as tk
+from tkinter import scrolledtext
 import pyautogui
 import time
 
-def insert_key():
-    keys = []
-    print("키를 입력하세요. 종료하려면 빈 문자열을 입력하세요.")
-    print("특수 키: up, down, left, right, tab, enter, space")
-    print("단축키 조합: ctrl+c, alt+f4, ctrl+space, shift+space 등")
-    
-    while True:
-        key = input("키 입력: ").lower()  # 소문자로 변환
-        if key == "":
-            break
-        
-        if '+' in key:
-            # 단축키 조합 처리
-            keys.append(tuple(key.split('+')))
-        elif key in ['up', 'down', 'left', 'right', 'tab', 'enter', 'space']:
-            # 특수 키 처리
-            keys.append(key)
-        else:
-            # 일반 키 처리
-            keys.append(key)
-    
-    return keys
+class KeyMacroGUI:
+    def __init__(self, master):
+        self.master = master
+        master.title("키보드 매크로")
+        master.geometry("250x250")
+        master.resizable(False, False)
 
-def repeat_keys(keys, interval=0.1):
-    for key in keys:
-        if isinstance(key, tuple):
-            # 단축키 조합 실행
-            pyautogui.hotkey(*key)
-        else:
-            # 단일 키 실행
-            pyautogui.press(key)
-        time.sleep(interval)
+        self.create_widgets()
 
-# 키 입력 받기
-keys = insert_key()
+    def create_widgets(self):
+        # 키 입력 안내 레이블
+        self.label = tk.Label(self.master, text="키를 입력하세요\nenter, space, left, right, up, down 가능\nctrl+space,shift+d 가능")
+        self.label.pack(pady=10)
 
-# 입력받은 키의 개수 출력
-print(f"입력받은 키의 개수: {len(keys)}")
+        # 스크롤 가능한 텍스트 입력 영역
+        self.text_area = scrolledtext.ScrolledText(self.master, width=50, height=10)
+        self.text_area.pack(pady=5)
 
-# 5초 대기 후 시작
-print("5초 후 매크로가 시작됩니다.")
-time.sleep(5)
+        # 실행 버튼
+        self.run_button = tk.Button(self.master, text="매크로 실행", command=self.run_macro)
+        self.run_button.pack(pady=5)
 
-# 입력받은 키 순서대로 실행
-repeat_keys(keys)
+    def run_macro(self):
+        keys = self.text_area.get("1.0", tk.END).strip().split("\n")
+        if not keys:
+            return
+
+        # 5초 대기
+        self.label.config(text="5초 후 매크로가 시작됩니다...")
+        self.master.update()
+        time.sleep(5)
+
+        # 매크로 실행
+        for key in keys:
+            if key:
+                pyautogui.press(key)
+                time.sleep(0.1)
+
+        self.label.config(text="매크로 실행 완료!")
+
+def main():
+    root = tk.Tk()
+    app = KeyMacroGUI(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
