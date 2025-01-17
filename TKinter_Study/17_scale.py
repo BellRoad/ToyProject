@@ -5,9 +5,9 @@ window.title("YUN DAE HEE")
 window.geometry("640x400+100+100")
 window.resizable(False, False)
 
-def select(self):
-    value="값 : "+str(scale.get())
-    label.config(text=value)
+def select(value):
+    label_text= "값 : {0}".format(str(value))
+    label.config(text=label_text)
 
 var=tkinter.IntVar()
 
