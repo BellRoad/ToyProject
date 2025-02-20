@@ -65,7 +65,7 @@ options = webdriver.EdgeOptions()
 options.add_argument("disable-gpu")
 options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-driver_path = "G:\Study\python\msedgedriver.exe"
+driver_path = "G:\Study\ToyProject\msedgedriver.exe"
 service = Service(executable_path=driver_path)
 driver = webdriver.Edge(service=service, options=options)
 
