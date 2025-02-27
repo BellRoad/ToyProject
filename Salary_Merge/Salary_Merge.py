@@ -41,7 +41,7 @@ for month in range(1, 13):
     extracted_df = extracted_df.iloc[:-1]
     
     # "월" 열 추가
-    extracted_df.insert(0, '월', f"{month:02d}")
+    extracted_df.insert(0, '월', f"{month:02d}월")
     
     # 결과 데이터프레임에 추가
     final_df = pd.concat([final_df, extracted_df], ignore_index=True)
