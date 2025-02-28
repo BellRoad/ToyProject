@@ -12,11 +12,12 @@ os.rename(filename, new_filename)
 htmlFile = new_filename
 
 # html 파일 열기
-with open(htmlFile, 'r', encoding='utf-8') as f:
+with open(htmlFile, 'rb') as f:
     html_content = f.read()
 
 # html 파일 구문 분석
-root = html.fromstring(html_content)
+parser = html.HTMLParser(encoding='utf-8')
+root = html.fromstring(html_content, parser=parser)
 
 # csv 파일 생성
 csvFile = htmlFile.replace('.html', '.csv')
