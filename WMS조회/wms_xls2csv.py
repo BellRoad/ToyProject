@@ -6,7 +6,7 @@ from tqdm import tqdm
 print("인터넷주문시스템(WMS)에서 다운받은 xls파일을 csv로 변환해주는 프로그램\n같은 폴더에 파일이 있어야 작동 됨")
 
 # html 파일 경로
-filename = input("파일 이름 입력(확장자 제외)") + ".xls"
+filename = input("파일 이름 입력(확장자 제외) : ") + ".xls"
 new_filename = filename.rsplit('.', 1)[0] + '.html'
 os.rename(filename, new_filename)
 htmlFile = new_filename
