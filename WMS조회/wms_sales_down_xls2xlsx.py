@@ -133,7 +133,7 @@ xlsxFile = htmlFile.replace('.html', '.xlsx')
 workbook = xlsxwriter.Workbook(xlsxFile)
 
 # xlsx 파일의 시트 객체
-worksheet = workbook.add_worksheet()
+worksheet = workbook.add_worksheet('매출장')
 
 # html 파일의 테이블 객체
 table = root.xpath('//table')[0]  # 첫 번째 테이블만 선택
