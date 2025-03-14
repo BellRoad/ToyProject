@@ -179,5 +179,3 @@ for i in range(1, 7):
 
 # 파일 다운로드 완료 후 엣지드라이버 종료
 driver.quit()
-
-os.system("pause")
