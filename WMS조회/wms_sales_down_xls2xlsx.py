@@ -40,6 +40,9 @@ while True:
     else:
         break
 
+# 프로그램 시작 시간 기록
+start_time = time.time()
+
 # 입력 날짜 형식 변경
 def datetrans(date):
     year = date[:4]
@@ -179,5 +182,12 @@ os.remove(new_filename)
 
 # 완료 알림 표시
 print("\n" + xlsxFile + "이 생성되었습니다.")
+
+# 프로그램 종료 시간 기록
+end_time = time.time()
+
+# 전체 실행 시간 계산 및 출력
+elapsed_time = end_time - start_time
+print(f"프로그램 실행 시간: {elapsed_time:.2f}초")
 
 os.system("pause")
