@@ -78,6 +78,14 @@ driver.get('http://order.mydongsim.com/Login.do?user_id=finance3&password=6093')
 # 페이지가 완전히 로딩되도록 2초동안 기다림
 time.sleep(2)
 
+'''
+# ID, PW 창을 찾아서 입력
+driver.find_element(By.XPATH, '//*[@id="user_id"]').send_keys('finance3')
+driver.find_element(By.XPATH, '//*[@id="password"]').send_keys('6093')
+driver.find_element(By.XPATH, '//*[@id="loginBtn"]/img').click()
+time.sleep(2)
+'''
+
 down_url = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
 driver.get(down_url)
 
@@ -90,6 +98,11 @@ while not os.path.exists(os.path.join(filename)):
 driver.quit()
 
 print("xls를 xlsx로 변환 시작")
+
+# 액셀 관련 모듈 import
+import xlsxwriter
+from lxml import html
+from tqdm import tqdm
 
 # 파일 이름 정리
 def undatetrans(date):
@@ -108,41 +121,63 @@ def get_compcd_name(comp):
     }.get(comp, "알 수 없음")
 compcd = get_compcd_name(compcd)
 
-import pandas as pd
-import os
-
-# 파일 이름 변경
+# xls를 html로 이름 변환
 new_filename = filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + datefrom + '-' + dateto + '.html'
 os.rename(filename, new_filename)
 htmlFile = new_filename
 
-# HTML 파일 읽기
-df = pd.read_html(htmlFile)[0]  # 첫 번째 테이블만 선택
+# html 파일 열기
+with open(htmlFile, 'r', encoding='utf-8') as f:
+    html_content = f.read()
 
-# 첫 번째 행을 헤더로 설정
-df.columns = df.iloc[0]
-df = df[1:].reset_index(drop=True)
+# html 파일 구문 분석
+root = html.fromstring(html_content)
 
-# 날짜 열 변환
-date_columns = ['처리일자', '주문일자']
-for col in date_columns:
-    df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
-
-# 숫자 열 변환
-numeric_columns = ['수량', '단가', '금액']
-for col in numeric_columns:
-    df[col] = pd.to_numeric(df[col], errors='coerce')
-
-# 나머지 열은 문자열로 유지
-string_columns = ['NO', '주문번호', '지사ID', '주문자', '인수자', '주문시간', '구분', '제품코드', '제품명', '단위']
-for col in string_columns:
-    df[col] = df[col].astype(str)
-
-# XLSX 파일 생성 및 저장
+# xlsx 파일 생성
 xlsxFile = htmlFile.replace('.html', '.xlsx')
-df.to_excel(xlsxFile, sheet_name='매출장', index=False)
+workbook = xlsxwriter.Workbook(xlsxFile)
 
-# HTML 파일 삭제
+# xlsx 파일의 시트 객체
+worksheet = workbook.add_worksheet('매출장')
+
+# html 파일의 테이블 객체
+table = root.xpath('//table')[0]  # 첫 번째 테이블만 선택
+
+# 테이블의 행과 열을 순회하며 셀에 값 쓰기
+row = 0
+for tr in tqdm(table.xpath('.//tr')):
+    col = 0
+    for td in tr.xpath('.//td'):
+        # 셀의 텍스트 값
+        value = td.text_content().strip()
+
+        # C, D 열의 점(.)을 하이픈(-)으로 변경
+        if col == 2 or col == 3:
+            value = value.replace('.', '-')
+
+        # A, I, M, N, O 열의 문자를 숫자로 변경
+        if col == 0 or col == 8 or col == 12 or col == 13 or col == 14:
+            try:
+                value = int(value.replace(',', ''))
+            except ValueError:
+                pass
+
+        # 셀의 배경색 값
+        bgcolor = td.get('bgcolor')
+        # 셀의 서식 객체
+        format = workbook.add_format()
+        # 셀의 배경색 설정
+        if bgcolor:
+            format.set_bg_color(bgcolor)
+        # xlsx 파일의 셀에 값과 서식 쓰기
+        worksheet.write(row, col, value, format)
+        col += 1
+    row += 1
+
+# xlsx 파일 닫기
+workbook.close()
+
+# html 파일 삭제
 os.remove(new_filename)
 
 # 완료 알림 표시
