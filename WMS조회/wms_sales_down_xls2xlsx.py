@@ -70,16 +70,18 @@ service = Service(executable_path=driver_path)
 driver = webdriver.Edge(service=service, options=options)
 
 # 엣지 드라이버에 url 주소 넣고 실행
-driver.get('http://order.mydongsim.com/login.jsp')
+driver.get('http://order.mydongsim.com/Login.do?user_id=finance3&password=6093')
 
 # 페이지가 완전히 로딩되도록 2초동안 기다림
 time.sleep(2)
 
+'''
 # ID, PW 창을 찾아서 입력
 driver.find_element(By.XPATH, '//*[@id="user_id"]').send_keys('finance3')
 driver.find_element(By.XPATH, '//*[@id="password"]').send_keys('6093')
 driver.find_element(By.XPATH, '//*[@id="loginBtn"]/img').click()
 time.sleep(2)
+''''
 
 down_url = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
 driver.get(down_url)
