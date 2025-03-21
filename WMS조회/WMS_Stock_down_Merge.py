@@ -30,6 +30,9 @@ while True:
     else:
         break
 
+# 프로그램 시작 시간 기록
+start_time = time.time()
+
 # 입력 날짜 형식 변경
 def datetrans(date):
     year = date[:4]
@@ -99,13 +102,6 @@ for i in range(1, 7):
     filename = "재고리스트(누계).xls"
     while not os.path.exists(os.path.join(filename)):
         time.sleep(3)
-
-    # print("xls를 xlsx로 변환 시작")
-
-    # 액셀 관련 모듈 import
-    # import xlsxwriter
-    # from lxml import html
-    # from tqdm import tqdm
 
     # 파일 이름 정리
     def undatetrans(date):
@@ -197,5 +193,12 @@ def delete_html_files(patterns):
                 print(f"{file} 삭제 실패: {e}")
 
 delete_html_files(patterns)
+
+# 프로그램 종료 시간 기록
+end_time = time.time()
+
+# 전체 실행 시간 계산 및 출력
+elapsed_time = end_time - start_time
+print(f"프로그램 실행 시간: {elapsed_time:.2f}초")
 
 os.system("pause")
