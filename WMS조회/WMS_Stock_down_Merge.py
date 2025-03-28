@@ -1,10 +1,8 @@
-# selenium의 webdriver를 사용하기 위한 import
+# selenium의 webdriver를 사용하기 위한 import. 엣지드라이버 설치여부 체크 후 자동 실행
 from selenium import webdriver
-from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
-
-# selenium으로 무엇인가 입력하기 위한 import
-from selenium.webdriver.common.by import By
+from selenium.webdriver.edge.webdriver import WebDriver as EdgeDriver
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 # 페이지 로딩을 기다리는데에 사용할 time 모듈 import
 import time
@@ -43,6 +41,7 @@ def datetrans(date):
 datetrans(datefrom)
 datetrans(dateto)
 
+'''
 # 웹드라이버 버젼 관련 WARNING 레벨 이상의 메시지 숨기기
 import logging
 
@@ -62,6 +61,10 @@ driver_path = "G:\Study\ToyProject\msedgedriver.exe"
 service = Service(executable_path=driver_path)
 service = Service()
 driver = webdriver.Edge(service=service, options=options)
+'''
+# 엣지 드라이버 실행행
+service = Service(executable_path=EdgeChromiumDriverManager().install())
+driver = EdgeDriver(service=service)
 
 # 엣지 드라이버에 url 주소 넣고 실행
 driver.get('http://order.mydongsim.com/Login.do?user_id=finance3&password=6093')
@@ -69,6 +72,23 @@ driver.get('http://order.mydongsim.com/Login.do?user_id=finance3&password=6093')
 # 페이지가 완전히 로딩되도록 2초동안 기다림
 time.sleep(2)
 
+# 엣지 브라우져 다운로드 경로 확인
+import winreg
+
+def get_download_folder():
+    try:
+        # 레지스트리에서 다운로드 폴더 경로 확인
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders') as key:
+            downloads_path = winreg.QueryValueEx(key, '{374DE290-123F-4565-9164-39C4925E467B}')[0]
+        return downloads_path
+    except Exception:
+        # 레지스트리에서 찾지 못한 경우 기본 경로 반환
+        return os.path.join(os.path.expanduser('~'), 'Downloads')
+
+# 다운로드 폴더 경로 가져오기
+downloads_folder = get_download_folder()
+
+# 법인, 센터 구분하여 파일을 다운로드
 for i in range(1, 7):
     if i == 1:
         compcd = "1" #동심
@@ -100,7 +120,8 @@ for i in range(1, 7):
 
     # 재고리스트(누계) 파일 다운로드 되는 동안 프로그램 종료 대기
     filename = "재고리스트(누계).xls"
-    while not os.path.exists(os.path.join(filename)):
+    file_path = os.path.join(downloads_folder, filename)
+    while not os.path.exists(file_path):
         time.sleep(3)
 
     # 파일 이름 정리
@@ -121,13 +142,17 @@ for i in range(1, 7):
     compcd = get_compcd_name(compcd)
 
     # xls를 html로 이름 변환
-    new_filename = filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + agy_name + ' ' + datefrom + '-' + dateto + '.html'
-    os.rename(filename, new_filename)
-    htmlFile = new_filename
+    # new_filename = filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + agy_name + ' ' + datefrom + '-' + dateto + '.html'
+    # os.rename(filename, new_filename)
+    # htmlFile = new_filename
+    new_filename = os.path.join(downloads_folder, filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + agy_name + ' ' + datefrom + '-' + dateto + '.html')
+    os.rename(file_path, new_filename)
+    # htmlFile = new_filename
 
 # 파일 다운로드 완료 후 엣지드라이버 종료
 driver.quit()
 
+'''
 # 파일을 pandas로 변환 후 재고 센터를 병합
 import pandas as pd
 import re
@@ -193,6 +218,7 @@ def delete_html_files(patterns):
                 print(f"{file} 삭제 실패: {e}")
 
 delete_html_files(patterns)
+'''
 
 # 프로그램 종료 시간 기록
 end_time = time.time()
