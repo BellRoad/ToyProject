@@ -128,7 +128,7 @@ for i in range(1, 7):
 driver.quit()
 
 
-# 작업 폴더 변경경
+# 작업 폴더 변경
 os.chdir(downloads_folder)
 
 # 파일을 pandas로 변환 후 재고 센터를 병합
