@@ -41,27 +41,6 @@ def datetrans(date):
 datetrans(datefrom)
 datetrans(dateto)
 
-'''
-# 웹드라이버 버젼 관련 WARNING 레벨 이상의 메시지 숨기기
-import logging
-
-class MyHandler(logging.Handler):
-    def emit(self, record):
-        if "The msedgedriver version" not in record.msg:
-            logging._log(record.levelno, record.msg, record.args, record.exc_info, record.filename, record.lineno, record.funcName, record.created, record.msecs, record.relativeCreated, record.thread, record.threadName, record.process, record.processName, record.stack_info)
-
-logging.basicConfig(level=logging.WARNING, handlers=[MyHandler()])
-
-# SSL 관련 오류 안보이게 하고 엣지 드라이버 실행
-options = webdriver.EdgeOptions()
-options.add_argument("disable-gpu")
-options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-driver_path = "G:\Study\ToyProject\msedgedriver.exe"
-service = Service(executable_path=driver_path)
-service = Service()
-driver = webdriver.Edge(service=service, options=options)
-'''
 # 엣지 드라이버 실행행
 service = Service(executable_path=EdgeChromiumDriverManager().install())
 driver = EdgeDriver(service=service)
@@ -142,17 +121,16 @@ for i in range(1, 7):
     compcd = get_compcd_name(compcd)
 
     # xls를 html로 이름 변환
-    # new_filename = filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + agy_name + ' ' + datefrom + '-' + dateto + '.html'
-    # os.rename(filename, new_filename)
-    # htmlFile = new_filename
     new_filename = os.path.join(downloads_folder, filename.rsplit('.', 1)[0] + ' ' + compcd + ' ' + agy_name + ' ' + datefrom + '-' + dateto + '.html')
     os.rename(file_path, new_filename)
-    # htmlFile = new_filename
 
 # 파일 다운로드 완료 후 엣지드라이버 종료
 driver.quit()
 
-'''
+
+# 작업 폴더 변경경
+os.chdir(downloads_folder)
+
 # 파일을 pandas로 변환 후 재고 센터를 병합
 import pandas as pd
 import re
@@ -218,7 +196,6 @@ def delete_html_files(patterns):
                 print(f"{file} 삭제 실패: {e}")
 
 delete_html_files(patterns)
-'''
 
 # 프로그램 종료 시간 기록
 end_time = time.time()
