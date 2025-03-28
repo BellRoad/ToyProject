@@ -51,23 +51,6 @@ def datetrans(date):
 datetrans(datefrom)
 datetrans(dateto)
 
-'''
-# 웹드라이버 버젼 관련 WARNING 레벨 이상의 메시지 숨기기
-import logging
-
-class MyHandler(logging.Handler):
-    def emit(self, record):
-        if "The msedgedriver version" not in record.msg:
-            logging._log(record.levelno, record.msg, record.args, record.exc_info, record.filename, record.lineno, record.funcName, record.created, record.msecs, record.relativeCreated, record.thread, record.threadName, record.process, record.processName, record.stack_info)
-
-logging.basicConfig(level=logging.WARNING, handlers=[MyHandler()])
-'''
-
-# SSL 관련 오류 안보이게 하고 엣지 드라이버 실행
-# options = webdriver.EdgeOptions()
-# options.add_argument("disable-gpu")
-# options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
-# options.add_experimental_option('excludeSwitches', ['enable-logging'])
 service = Service(executable_path=EdgeChromiumDriverManager().install())
 driver = EdgeDriver(service=service)
 
@@ -79,13 +62,6 @@ time.sleep(2)
 
 down_url = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
 driver.get(down_url)
-
-'''
-# 매출장 파일 다운로드 되는 동안 프로그램 종료 대기
-filename = "매출장.xls"
-while not os.path.exists(os.path.join(filename)):
-    time.sleep(5)
-'''
 
 # 엣지 브라우져 다운로드 경로 확인
 import winreg
