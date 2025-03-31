@@ -51,8 +51,18 @@ def datetrans(date):
 datetrans(datefrom)
 datetrans(dateto)
 
+'''
 service = Service(executable_path=EdgeChromiumDriverManager().install())
 driver = EdgeDriver(service=service)
+'''
+
+# Edge 옵션 생성
+edge_options = webdriver.EdgeOptions()
+edge_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+# 서비스 및 드라이버 초기화
+service = Service(executable_path=EdgeChromiumDriverManager().install())
+driver = webdriver.Edge(service=service, options=edge_options)
 
 # 엣지 드라이버에 url 주소 넣고 실행
 driver.get('http://order.mydongsim.com/Login.do?user_id=finance3&password=6093')
