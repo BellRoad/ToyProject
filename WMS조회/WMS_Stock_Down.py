@@ -5,9 +5,37 @@ import winreg
 import time
 import os
 
-# 날짜 변수 예시 (실제 값으로 대체)
-datefrom = "20250401"
-dateto = "20250430"
+# 날짜 등 기초 정보 입력 및 서식 검토
+def get_date_input(prompt):
+    while True:
+        date_str = input(prompt)
+        if len(date_str) != 8:
+            print("입력한 날짜 형식이 올바르지 않습니다. 8자리로 다시 입력해주세요. (예: 20230101)")
+            continue
+        else:
+            return date_str
+
+while True:
+    datefrom = get_date_input("시작날짜(예. 20230101) : ")
+    dateto = get_date_input("종료날짜(예. 20230131) : ")
+    if dateto < datefrom:
+        print("종료날짜는 시작날짜보다 빠를 수 없습니다. 날짜를 다시 입력해주세요.")
+    else:
+        break
+print()
+
+# 프로그램 시작 시간 기록
+start_time = time.time()
+
+# 입력 날짜 형식 변경
+def datetrans(date):
+    year = date[:4]
+    month = date[4:6]
+    day = date[6:]
+    return f"{year}.{month}.{day}"
+
+datetrans(datefrom)
+datetrans(dateto)
 
 # 프로그램 시작 시간 기록
 start_time = time.time()
@@ -146,6 +174,8 @@ end_time = time.time()
 
 # 전체 실행 시간 계산 및 출력
 elapsed_time = end_time - start_time
+print()
 print(f"프로그램 실행 시간: {elapsed_time:.2f}초")
 
+print()
 os.system("pause")

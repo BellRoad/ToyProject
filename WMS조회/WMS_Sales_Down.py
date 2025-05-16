@@ -67,7 +67,6 @@ url1 = "http://order.mydongsim.com/Login.do?user_id=finance3&password=6093"
 response1 = session.get(url1)
 
 url2 = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
-# url2 = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=&date_from=20250101&date_to=20250131&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
 
 response2 = session.get(url2)
 
