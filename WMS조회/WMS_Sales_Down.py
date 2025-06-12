@@ -72,6 +72,7 @@ response2 = session.get(url2)
 
 # HTML 파일 읽기
 dfs = pd.read_html(StringIO(response2.text))
+# dfs = pd.read_html(StringIO(response2.text), flavor='bs4')
 df = dfs[0]
 
 # 첫 번째 행을 헤더로 설정
