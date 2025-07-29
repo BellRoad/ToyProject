@@ -39,14 +39,8 @@ def get_co_input(co):
             print("1,2,3 중 입력해주세요.")
             continue
 
-def get_id_input(id):
-    while True:
-        id_str = input(id)
-        return id_str
-
 while True:
     compcd = get_co_input("Enter. 전체 | 1.동심 | 2.5월5일 | 3.킨더 : ")
-    compid = get_id_input("거래처 ID를 입력하세요(전체 Enter) : ")
     datefrom = get_date_input("시작날짜(예. 20230101) : ")
     dateto = get_date_input("종료날짜(예. 20230131) : ")
     if dateto < datefrom:
@@ -72,12 +66,13 @@ session = requests.Session()
 url1 = "http://order.mydongsim.com/Login.do?user_id=finance3&password=6093"
 response1 = session.get(url1)
 
-url2 = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=" + compid + "&goods_name=&goods=&rule_cd6="
+url2 = "http://order.mydongsim.com/Report/Report070excel.jsp?comp_cd=" + compcd + "&date_from=" + datefrom + "&date_to=" + dateto + "&supply_cust_nm=&supply_custno=&goods_name=&goods=&rule_cd6="
 
 response2 = session.get(url2)
 
 # HTML 파일 읽기
 dfs = pd.read_html(StringIO(response2.text))
+# dfs = pd.read_html(StringIO(response2.text), flavor='bs4')
 df = dfs[0]
 
 # 첫 번째 행을 헤더로 설정
@@ -109,11 +104,7 @@ def get_compcd_name(comp):
     }.get(comp, "알 수 없음")
 compcd = get_compcd_name(compcd)
 
-if compid == "":
-    xlsxFile = ("매출장 " + compcd + ' ' + datefrom + '-' + dateto + '.xlsx')
-else:
-    xlsxFile = ("매출장 " + compcd + ' ' + compid + ' ' + datefrom + '-' + dateto + '.xlsx')
-
+xlsxFile = ("매출장 " + compcd + ' ' + datefrom + '-' + dateto + '.xlsx')
 df.to_excel(xlsxFile, sheet_name='매출장', index=False)
 
 print("WMS 매출장 저장 :" + xlsxFile)
